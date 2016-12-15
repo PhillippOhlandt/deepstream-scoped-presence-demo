@@ -1,0 +1,29 @@
+presence:
+  "*":
+    allow: "user.data.role === 'agent' || user.data.role === 'backend'"
+record:
+  "*":
+    create: false
+    write: false
+    read: false
+    delete: false
+    listen: false
+  presence/$username:
+    create: "(user.data.role === 'user' && user.id === $username) || user.data.role === 'agent' || user.data.role === 'backend'"
+    read: "(user.data.role === 'user' && user.id === $username) || user.data.role === 'agent' || user.data.role === 'backend'"
+    write: "(user.data.role === 'user' && user.id === $username) || user.data.role === 'backend'"
+    # write: "(user.data.role === 'user' && user.id === $username && data === '') || user.data.role === 'backend'"
+    listen: "user.data.role === 'backend'"
+    delete: "user.data.role === 'backend'"
+event:
+  "*":
+    publish: false
+    subscribe: false
+    listen: false
+rpc:
+  "*":
+    provide: false
+    request: false
+  join-chat:
+    provide: "user.data.role === 'backend'"
+    request: "data.me.role === user.data.role && data.me.username === user.id && (data.room === user.id || user.data.role === 'agent')"

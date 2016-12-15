@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>DS Scoped Presence Test</title>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.3/vue.js'></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/deepstream.io-client-js/2.0.0/deepstream.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id="app">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 col-md-offset-3">
+					<div v-if="!loggedIn">
+						<h1>Login</h1>
+						<input type="text" v-model="loginUsername" />
+						<input type="password" v-model="loginPassword" />
+						<button type="button" @click="login()">Login</button>
+					</div>
+					<div v-else>
+						<button type="button" @click="logout()">Logout</button>
+						<button type="button" @click="joinChat(myData.username)">Join own chat</button>
+
+						<div v-if="myData.role === 'agent'">
+						  <input type="text" v-model="joiningChatName" />
+						  <button type="button" @click="joinOtherChat">Join other Chat</button>
+						</div>
+					</div>
+
+					<hr />
+					<div class="row">
+						<div class="col-md-12">
+							<h2>Presence Record Content</h2>
+							<pre>
+								{{ presenceRecordContent }}
+							</pre>
+						</div>
+					</div>
+
+					<div class="row" v-if="presenceRecord">
+						<div class="col-md-12">
+							<h2>If Presence Record has a Provider</h2>
+							<pre>
+								{{ presenceRecord.hasProvider }}
+							</pre>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src='app.js'></script>
+</body>
+</html>
