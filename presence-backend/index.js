@@ -63,7 +63,7 @@ function listenForPresenceRecords() {
                 records.splice(index, 1);
             }
 
-            ds.record.getRecord(match).discard()
+            //ds.record.getRecord(match).discard()
 
         }
         updatePresenceRecords('PRESENCE RECORD LISTENING', match, isSubscribed)
