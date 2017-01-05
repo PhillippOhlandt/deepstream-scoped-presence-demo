@@ -1,0 +1,355 @@
+The following docker-compose output shows how two users can login, logout, join chats without anything happening.
+After everything was restarted while the browser clients are stilled logged in and connected, the backend service crashes.
+It seems like there is some race condition or missing discard somewhere.
+
+Starting deepstreamscopedpresencedemo_deepstream_1
+Starting deepstreamscopedpresencedemo_presence_backend_1
+Starting deepstreamscopedpresencedemo_application_1
+Attaching to deepstreamscopedpresencedemo_deepstream_1, deepstreamscopedpresencedemo_presence_backend_1, deepstreamscopedpresencedemo_application_1
+deepstream_1        |       _                     _                              _
+deepstream_1        |    __| | ___  ___ _ __  ___| |_ _ __ ___  __ _ _ __ ___   (_) ___
+deepstream_1        |   / _` |/ _ \/ _ \ '_ \/ __| __| '__/ _ \/ _` | '_ ` _ \  | |/ _ \
+deepstream_1        |  | (_| |  __/  __/ |_) \__ \ |_| | |  __/ (_| | | | | | |_| | (_) |
+deepstream_1        |   \__,_|\___|\___| .__/|___/\__|_|  \___|\__,_|_| |_| |_(_)_|\___/
+deepstream_1        |                  |_|
+deepstream_1        |  =========================   starting   ==========================
+deepstream_1        | INFO | logger ready
+deepstream_1        | INFO | deepstream version: 2.1.2
+deepstream_1        | INFO | configuration file loaded from /etc/deepstream/config.yml
+deepstream_1        | INFO | library directory set to: /var/lib/deepstream
+deepstream_1        | INFO | messageConnector ready
+deepstream_1        | INFO | storage ready
+deepstream_1        | INFO | cache ready
+deepstream_1        | INFO | permissionHandler ready: valve permissions loaded from /etc/deepstream/permissions.yml
+deepstream_1        | INFO | authenticationHandler ready: file using /etc/deepstream/users.yml
+deepstream_1        | INFO | Listening for health checks on path /health-check
+deepstream_1        | CLUSTER_JOIN | ixkbbzo9-1bcrerd9u2n4k
+deepstream_1        | INFO | Listening for websocket connections on 0.0.0.0:6020/deepstream
+deepstream_1        | INFO | Deepstream started
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.3)
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.3: AREQ{"username":"backend","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | backend
+deepstream_1        | S | for U:U by backend
+deepstream_1        | L | for R:presence/.* by backend
+deepstream_1        | S | for P:join-chat by backend
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  GET ALL USERS
+presence_backend_1  |  Users:  []
+presence_backend_1  |  Records:  []
+presence_backend_1  |  ==========================================================
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"userA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | userA
+presence_backend_1  |  ==========================================================
+deepstream_1        | LEADING_LISTEN | started for R:presence/userA
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE userA true
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  []
+presence_backend_1  |  ==========================================================
+deepstream_1        | LOCAL_LISTEN | started for R:presence/userA
+deepstream_1        | S | for R:presence/userA by userA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/userA true
+deepstream_1        | LEADING_LISTEN | finished for R:presence/userA
+deepstream_1        | LOCAL_LISTEN | stopped for R:presence/userA
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | S | for R:presence/userA by backend
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/userA true presence/userA {}
+deepstream_1        | US | for R:presence/userA by backend
+
+
+
+
+
+
+
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | agentA
+deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | LOCAL_LISTEN | started for R:presence/agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA', 'presence/agentA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | S | for R:presence/agentA by agentA
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | LEADING_LISTEN | finished for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | stopped for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by backend
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA true presence/userA {}
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/userA {}
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/agentA {}
+deepstream_1        | US | for R:presence/userA by backend
+deepstream_1        | US | for R:presence/agentA by backend
+
+
+
+
+
+
+deepstream_1        | US | for R:presence/agentA by agentA
+deepstream_1        | CLIENT_DISCONNECTED | agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA false
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA false
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+deepstream_1        | US | for R:presence/userA by backend
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA false presence/userA {}
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA false presence/userA {}
+
+
+
+
+
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | started for R:presence/agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA', 'presence/agentA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | S | for R:presence/agentA by agentA
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | LEADING_LISTEN | finished for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | stopped for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by backend
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA true presence/userA {}
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/userA {}
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/agentA {}
+deepstream_1        | US | for R:presence/userA by backend
+deepstream_1        | US | for R:presence/agentA by backend
+
+
+
+
+
+
+
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | US | for R:presence/userA by backend
+
+
+
+deepstream_1        | S | for R:presence/agentA by backend
+deepstream_1        | US | for R:presence/agentA by backend
+
+
+
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA false
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA false
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | US | for R:presence/agentA by agentA
+deepstream_1        | CLIENT_DISCONNECTED | agentA
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA false presence/userA { userA: { online: true, role: 'user' } }
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA false presence/userA { userA: { online: true, role: 'user' } }
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+deepstream_1        | US | for R:presence/userA by backend
+
+
+
+
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | started for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA', 'presence/agentA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | LEADING_LISTEN | finished for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | stopped for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by backend
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA true presence/userA { userA: { online: true, role: 'user' } }
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/userA { userA: { online: true, role: 'user' } }
+deepstream_1        | US | for R:presence/userA by backend
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/agentA { agentA: { online: true, role: 'agent' } }
+deepstream_1        | US | for R:presence/agentA by backend
+
+
+
+
+
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | US | for R:presence/userA by backend
+
+
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA false
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | US | for R:presence/agentA by agentA
+deepstream_1        | CLIENT_DISCONNECTED | agentA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA false
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA false presence/userA { userA: { online: true, role: 'user' },
+presence_backend_1  |   agentA: { online: true, role: 'agent' } }
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA false presence/userA { userA: { online: true, role: 'user' },
+presence_backend_1  |   agentA: { online: false, role: 'agent' } }
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+deepstream_1        | US | for R:presence/userA by backend
+
+
+
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | agentA
+deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | started for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by agentA
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | LEADING_LISTEN | finished for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | stopped for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by backend
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA true
+presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
+presence_backend_1  |  Records:  [ 'presence/userA', 'presence/agentA' ]
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA true presence/userA { userA: { online: true, role: 'user' },
+presence_backend_1  |   agentA: { online: false, role: 'agent' } }
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/userA { userA: { online: true, role: 'user' },
+presence_backend_1  |   agentA: { online: true, role: 'agent' } }
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/agentA true presence/agentA { agentA: { online: true, role: 'agent' } }
+deepstream_1        | US | for R:presence/userA by backend
+deepstream_1        | US | for R:presence/agentA by backend
+
+
+
+^CGracefully stopping... (press Ctrl+C again to force)
+Stopping deepstreamscopedpresencedemo_presence_backend_1 ... done
+Stopping deepstreamscopedpresencedemo_application_1 ... done
+Stopping deepstreamscopedpresencedemo_deepstream_1 ... done
+phillipp at Phillipps-MacBook-Pro in ~/Private/Code/Projects/deepstream-scoped-presence-demo on master$ docker-compose up
+Starting deepstreamscopedpresencedemo_deepstream_1
+Starting deepstreamscopedpresencedemo_presence_backend_1
+Starting deepstreamscopedpresencedemo_application_1
+Attaching to deepstreamscopedpresencedemo_deepstream_1, deepstreamscopedpresencedemo_presence_backend_1, deepstreamscopedpresencedemo_application_1
+deepstream_1        |       _                     _                              _
+deepstream_1        |    __| | ___  ___ _ __  ___| |_ _ __ ___  __ _ _ __ ___   (_) ___
+deepstream_1        |   / _` |/ _ \/ _ \ '_ \/ __| __| '__/ _ \/ _` | '_ ` _ \  | |/ _ \
+deepstream_1        |  | (_| |  __/  __/ |_) \__ \ |_| | |  __/ (_| | | | | | |_| | (_) |
+deepstream_1        |   \__,_|\___|\___| .__/|___/\__|_|  \___|\__,_|_| |_| |_(_)_|\___/
+deepstream_1        |                  |_|
+deepstream_1        |  =========================   starting   ==========================
+deepstream_1        | INFO | logger ready
+deepstream_1        | INFO | deepstream version: 2.1.2
+deepstream_1        | INFO | configuration file loaded from /etc/deepstream/config.yml
+deepstream_1        | INFO | library directory set to: /var/lib/deepstream
+deepstream_1        | INFO | messageConnector ready
+deepstream_1        | INFO | storage ready
+deepstream_1        | INFO | cache ready
+deepstream_1        | INFO | permissionHandler ready: valve permissions loaded from /etc/deepstream/permissions.yml
+deepstream_1        | INFO | authenticationHandler ready: file using /etc/deepstream/users.yml
+deepstream_1        | INFO | Listening for health checks on path /health-check
+deepstream_1        | CLUSTER_JOIN | ixkbrb1r-1s2w2gzzrzi88
+deepstream_1        | INFO | Listening for websocket connections on 0.0.0.0:6020/deepstream
+deepstream_1        | INFO | Deepstream started
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.3)
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.3: AREQ{"username":"backend","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | backend
+deepstream_1        | S | for U:U by backend
+deepstream_1        | L | for R:presence/.* by backend
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  GET ALL USERS
+deepstream_1        | S | for P:join-chat by backend
+presence_backend_1  |  Users:  []
+presence_backend_1  |  Records:  []
+presence_backend_1  |  ==========================================================
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"userA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | userA
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE UPDATE userA true
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  []
+presence_backend_1  |  ==========================================================
+deepstream_1        | LEADING_LISTEN | started for R:presence/userA
+deepstream_1        | LOCAL_LISTEN | started for R:presence/userA
+deepstream_1        | S | for R:presence/userA by userA
+deepstream_1        | INCOMING_CONNECTION | from undefined (172.21.0.1)
+presence_backend_1  |  ==========================================================
+presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/userA true
+presence_backend_1  |  Users:  [ 'userA' ]
+presence_backend_1  |  Records:  [ 'presence/userA' ]
+presence_backend_1  |  ==========================================================
+deepstream_1        | LEADING_LISTEN | finished for R:presence/userA
+deepstream_1        | LOCAL_LISTEN | stopped for R:presence/userA
+deepstream_1        | S | for R:presence/userA by backend
+deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
+deepstream_1        | AUTH_SUCCESSFUL | agentA
+deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
+deepstream_1        | LOCAL_LISTEN | started for R:presence/agentA
+deepstream_1        | S | for R:presence/agentA by agentA
+presence_backend_1  |  RECORD UPDATE  PRESENCE RECORD LISTENING presence/userA true presence/userA {}
+deepstream_1        | US | for R:presence/userA by backend
+presence_backend_1  | --- You can catch all deepstream errors by subscribing to the error event ---
+presence_backend_1  | /opt/node_modules/deepstream.io-client-js/src/client.js:185
+presence_backend_1  |  		throw new Error( errorMsg );
+presence_backend_1  |  		^
+presence_backend_1  |
+presence_backend_1  | Error: UNSOLICITED_MESSAGE: presence/userA (R)
+presence_backend_1  |     at Client._$onError (/opt/node_modules/deepstream.io-client-js/src/client.js:185:9)
+presence_backend_1  |     at RecordHandler._$handle (/opt/node_modules/deepstream.io-client-js/src/record/record-handler.js:285:16)
+presence_backend_1  |     at Client._$onMessage (/opt/node_modules/deepstream.io-client-js/src/client.js:128:42)
+presence_backend_1  |     at Connection._onMessage (/opt/node_modules/deepstream.io-client-js/src/message/connection.js:362:17)
+presence_backend_1  |     at WebSocket.onMessage (/opt/node_modules/ws/lib/WebSocket.js:442:14)
+presence_backend_1  |     at emitTwo (events.js:106:13)
+presence_backend_1  |     at WebSocket.emit (events.js:191:7)
+presence_backend_1  |     at Receiver.ontext (/opt/node_modules/ws/lib/WebSocket.js:841:10)
+presence_backend_1  |     at /opt/node_modules/ws/lib/Receiver.js:536:18
+presence_backend_1  |     at Receiver.applyExtensions (/opt/node_modules/ws/lib/Receiver.js:371:5)
+deepstream_1        | US | for U:U by backend
+deepstream_1        | UL | for R:presence/.* by backend
+deepstream_1        | US | for P:join-chat by backend
+deepstream_1        | CLIENT_DISCONNECTED | backend
+deepstreamscopedpresencedemo_presence_backend_1 exited with code 1
+deepstream_1        | TIMEOUT | lock R_LISTEN_LOCK_presence/agentA released due to timeout
