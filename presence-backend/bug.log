@@ -2,6 +2,7 @@ The following docker-compose output shows how two users can login, logout, join 
 After everything was restarted while the browser clients are stilled logged in and connected, the backend service crashes.
 It seems like there is some race condition or missing discard somewhere.
 
+// starting the services and logging in with userA
 Starting deepstreamscopedpresencedemo_deepstream_1
 Starting deepstreamscopedpresencedemo_presence_backend_1
 Starting deepstreamscopedpresencedemo_application_1
@@ -65,7 +66,7 @@ deepstream_1        | US | for R:presence/userA by backend
 
 
 
-
+// logging in with agentA
 deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
 deepstream_1        | AUTH_SUCCESSFUL | agentA
 deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
@@ -95,7 +96,7 @@ deepstream_1        | US | for R:presence/agentA by backend
 
 
 
-
+// logging out with agentA
 deepstream_1        | US | for R:presence/agentA by agentA
 deepstream_1        | CLIENT_DISCONNECTED | agentA
 presence_backend_1  |  ==========================================================
@@ -117,7 +118,7 @@ presence_backend_1  |  RECORD UPDATE  PRESENCE UPDATE agentA false presence/user
 
 
 
-
+// logging in with agentA
 deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
 deepstream_1        | AUTH_SUCCESSFUL | agentA
 presence_backend_1  |  ==========================================================
@@ -148,17 +149,17 @@ deepstream_1        | US | for R:presence/agentA by backend
 
 
 
-
+// userA joins its own chat
 deepstream_1        | S | for R:presence/userA by backend
 deepstream_1        | US | for R:presence/userA by backend
 
 
-
+// agentA joins its own chat
 deepstream_1        | S | for R:presence/agentA by backend
 deepstream_1        | US | for R:presence/agentA by backend
 
 
-
+// logging out with agentA
 presence_backend_1  |  ==========================================================
 presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA false
 presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
@@ -179,7 +180,7 @@ deepstream_1        | US | for R:presence/userA by backend
 
 
 
-
+// logging in with agentA
 deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
 deepstream_1        | AUTH_SUCCESSFUL | agentA
 presence_backend_1  |  ==========================================================
@@ -208,11 +209,12 @@ deepstream_1        | US | for R:presence/agentA by backend
 
 
 
-
+// agentA joins userA's chat
 deepstream_1        | S | for R:presence/userA by backend
 deepstream_1        | US | for R:presence/userA by backend
 
 
+// logging out with agentA
 presence_backend_1  |  ==========================================================
 presence_backend_1  |  UPDATE PRESENCE RECORDS:  PRESENCE RECORD LISTENING presence/agentA false
 presence_backend_1  |  Users:  [ 'userA', 'agentA' ]
@@ -235,6 +237,7 @@ deepstream_1        | US | for R:presence/userA by backend
 
 
 
+// loggin in with agentA
 deepstream_1        | AUTH_ATTEMPT | 172.21.0.1: AREQ{"username":"agentA","password":"password"}
 deepstream_1        | AUTH_SUCCESSFUL | agentA
 deepstream_1        | LEADING_LISTEN | started for R:presence/agentA
@@ -263,7 +266,7 @@ deepstream_1        | US | for R:presence/userA by backend
 deepstream_1        | US | for R:presence/agentA by backend
 
 
-
+// Let's restart everything and see what happens when the browser clients reconnect
 ^CGracefully stopping... (press Ctrl+C again to force)
 Stopping deepstreamscopedpresencedemo_presence_backend_1 ... done
 Stopping deepstreamscopedpresencedemo_application_1 ... done
